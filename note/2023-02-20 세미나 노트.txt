@@ -1,0 +1,33 @@
+오늘 타임라인
+
+numpy를 열어보려 했지만 너무 많은 파일이 있어 쉽지 않았음
+
+레퍼런스
+https://docs.python.org/3/extending/extending.html
+
+C언어를 컴파일 할 GCC 컴파일러가 없음
+- Windows 용 GCC 컴파일러 MinGW 설치
+- 환경 변수 추가후 gcc 잘 도는거 확인
+
+Python.h 헤더파일을 불러오지 못하는 문제 발생
+- python3-dev 를 설치해야하는데, windows에는 없음
+- 126서버로 이동
+- 아나콘다 가상환경 LeeInGyu 생성 후 진행(의미 없잖어 ㅋㅋ)
+- gcc 설치 또한 확인 완료
+- sudo apt-get install python3-dev 명령어로 설치 완료
+- https://stackoverflow.com/questions/16448710/how-to-get-python-dev-for-windows 참고함
+
+g++ -shared -fPIC -o test.so test.c 명령어로
+test.so 파일 생성
+
+c_module.dll 파일이 어딨는지 모르는 문제 발생
+- 해결방안 생각1 : 리눅스 파일 검색으로 찾아보기
+- 파일이 안보이는게 아니라 so 생성 후 사용하는 것
+- 일단 성공함ㅎㅎ
+
+time 라이브러리로 속도 측정을 해보니 연산량이 적음에도 불구하고, 속도가 더 느리게 나오는 문제 발생
+- 문제 예상 1: .so 파일을 불러오는 과정에서 속도가 느리게 됨
+- 해결방안: 예상이지만, init을 통해서 라이브러리 호출시 기본적으로 세팅하도록 해보자.
+
+so 파일은 리눅스용 동적 라이브러리를 의미함
+문제점: 잘 적용이 되고 있는지 검증을 하지 못하고 있음

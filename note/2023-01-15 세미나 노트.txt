@@ -1,0 +1,102 @@
+클린 코드 - 파이썬
+
+레퍼런스 : 클린 코드 이제는 파이썬이다.
+지은이 : 알 스웨이가트
+
+전체 내용
+1장. 에러 메시지 파악, 환경 설정
+2장. 클린 코드의 모범 사례, 도구, 기법
+3장. 파이썬의 객체지향 프로그래밍
+
+- 에러 메시지 파악
+파이썬 프로그램은 코드가 try except 문으로 처리할 수 없는 예외가 발생하면 충돌(crash)를 발생시킨다.
+이때 파이썬은 에러 메시지와 함께 스택 추적(stack trace)을 보여준다.
+
+스택 추적의 예시
+```python
+def a():
+    print('Start of a()')
+    b()
+
+def b():
+    print('Start of b()')
+    c()
+
+def c():
+    print('Start of c()')
+    42 / 0 # division error
+
+a()
+```
+
+```output
+C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일>python 2023-01-15-1.py
+Start of a()
+Start of b()
+Start of c()
+Traceback (most recent call last):
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 13, in <module>
+    a()
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 3, in a
+    b()
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 7, in b
+    c()
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 11, in c
+    42 / 0 # division error
+    ~~~^~~
+ZeroDivisionError: division by zero
+```
+
+위와 파이썬 프로그램에서 오류가 발생했을 때, ZeroDivisionError와 함께 Traceback이 출력되는 것을 확인할 수 있다.
+하나씩 살펴보면
+
+Traceback (most recent call last):
+다음에 추적 정보가 나열 되는 것을 알 수 있다.
+
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 13, in <module>
+    a()
+
+- 처음으로 a()라는 함수가 호출되었다.
+- <module>의 의미는 이 행이 전역(global)에 위치해 있다는 것을 알려준다.
+
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 3, in a
+    b()
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 7, in b
+    c()
+
+- 그 다음 a 함수 내에서 b()가 호출되었고, b 함수 내에서 c 함수가 호출 되었다.
+
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 11, in c
+    42 / 0 # division error
+    ~~~^~~
+ZeroDivisionError: division by zero
+
+- 마지막으로 c 함수에서 42 / 0 코드가 실행되었는데, 이때 오류가 발생했음을 알 수 있다.
+- 이때 추적 정보가 제공한 행 번호는 파이썬이 에러를 최종적으로 감지한 곳이며, 진짜 원인은 이 앞에 있을 수 있다.
+
+```python
+def spam(number1, number2):
+    return number1 / (number2 - 42)
+
+spam(101, 42)
+```
+
+```output
+C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일>python 2023-01-15-1.py 
+Traceback (most recent call last):
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 4, in <module>
+    spam(101, 42)
+  File "C:\Users\dldls\OneDrive\바탕 화면\CSLab Semina\세미나 준비용 파일\2023-01-15-1.py", line 2, in spam
+    return number1 / (number2 - 42)
+           ~~~~~~~~^~~~~~~~~~~~~~~~
+ZeroDivisionError: division by zero
+```
+
+- 이것이 그 예시이다.
+- 사실 위의 코드에서 오류가 감지된 return number1 / (number2 - 42) 는 문제가 없지만, number2에 42라는 값이 들어왔을 때만 문제가 발생 된다.
+결론적으로 문제는 return 에서가 아닌 spam(101, 42)에서 문제인 것이다.
+
+린터(Linter)
+- 소스 코드를 실행하지 않고, 분석해 잠재적인 에러를 경고하는 프로그램이다.
+- 세탁기에 있는 섬유와 찌꺼기를 거르는 보풀 거름망(lint trap)에서 유래되었다.
+- 정적 분석(실행하지 않고 분석하는 것)을 통하기 때문에 모든 에러를 잡아내지는 못한다.
